@@ -66,3 +66,36 @@ def eliminar_mascota(db: Session, mascota_id: int) -> Mascota:
     db_mascota = leer_mascota(mascota_id)
     db_mascota.delete(db)
     return db_mascota
+
+
+# operaciones CRUD para Vehiculos
+
+
+def crear_vehiculo(db: Session, vehiculo: schemas.VehiculoCreate) -> Vehiculo:
+    return Vehiculo.create(db, nombre=vehiculo.nombre, patente=vehiculo.patente)
+
+
+def listar_vehiculo(db: Session) -> List[Vehiculo]:
+    return Vehiculo.get_all(db)
+
+
+def leer_vehiculo(db: Session, vehiculo_id: int) -> Vehiculo:
+    db_vehiculo = Vehiculo.get(db, vehiculo_id)
+    if db_vehiculo is None:
+        raise exceptions.VehiculoNoEncontrado()
+    return db_vehiculo
+
+
+def modificar_vehiculo(
+    db: Session, vehiculo_id: int, vehiculo: schemas.VehiculoUpdate
+) -> Vehiculo:
+    db_vehiculo = leer_vehiculo(db, vehiculo_id)
+    return db_vehiculo.update(db, nombre=vehiculo.nombre, patente=vehiculo.patente)
+
+
+def eliminar_vehiculo(db: Session, vehiculo_id: int) -> Vehiculo:
+    db_vehiculo = leer_vehiculo(db, vehiculo_id_id)
+    if len(db_vehiculo.mascotas) > 0:
+        raise exceptions.VehiculoTienePatente()
+    db_vehiculo.delete(db)
+    return db_vehiculo

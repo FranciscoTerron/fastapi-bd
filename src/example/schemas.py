@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr, field_validator
+from pydantic import BaseModel, EmailStr, PatenteStr, field_validator
 from typing import List
 from datetime import datetime
 from src.example.models import TipoMascota
@@ -63,3 +63,30 @@ class Mascota(MascotaBase):
     nombre_tutor: str
 
     model_config = {"from_attributes": True}
+
+
+
+
+class VehiculoBase(BaseModel):
+    nombre: str
+    patente: PatenteStr
+
+
+class VehiculoCreate(VehiculoBase):
+    pass
+
+
+class VehiculoUpdate(VehiculoBase):
+    pass
+
+
+class Vehiculo(VehiculoBase):
+    id: int
+    fecha_creacion: datetime
+    fecha_modificacion: datetime
+    mascotas: List["Mascota"]
+
+    # from_atributes=True permite que Pydantic trabaje con modelos SQLAlchemy
+    # más info.: https://docs.pydantic.dev/latest/api/config/#pydantic.config.ConfigDict.from_attributes
+    model_config = {"from_attributes": True}
+

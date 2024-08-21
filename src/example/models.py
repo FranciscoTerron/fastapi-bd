@@ -47,3 +47,19 @@ class Mascota(BaseModel):
     @property
     def nombre_tutor(self):
         return self.tutor.nombre
+    
+class Vehiculo (BaseModel):
+    __tablename__ = "vehiculos"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    nombre: Mapped[str] = mapped_column(String, index=True)
+    patente: Mapped[str] = mapped_column(String, unique=True, index=True)
+    fecha_creacion: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(UTC))
+    fecha_modificacion: Mapped[datetime] = mapped_column(
+        DateTime, default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC)
+    )
+    mascotas: Mapped[Optional[List["Mascota"]]] = relationship(
+        "Mascota", back_populates="tutor"
+        
+    )
+
