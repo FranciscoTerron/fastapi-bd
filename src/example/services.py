@@ -1,6 +1,6 @@
 from typing import List
 from sqlalchemy.orm import Session
-from src.example.models import Persona, Mascota
+from src.example.models import Persona, Mascota, Vehiculo
 from src.example import schemas, exceptions
 
 # operaciones CRUD para Personas
@@ -69,10 +69,12 @@ def eliminar_mascota(db: Session, mascota_id: int) -> Mascota:
 
 
 # operaciones CRUD para Vehiculos
+# operaciones CRUD para Mascota
 
 
 def crear_vehiculo(db: Session, vehiculo: schemas.VehiculoCreate) -> Vehiculo:
-    return Vehiculo.create(db, nombre=vehiculo.nombre, patente=vehiculo.patente)
+    return Vehiculo.create(db, vehiculo)
+
 
 
 def listar_vehiculo(db: Session) -> List[Vehiculo]:
@@ -82,7 +84,7 @@ def listar_vehiculo(db: Session) -> List[Vehiculo]:
 def leer_vehiculo(db: Session, vehiculo_id: int) -> Vehiculo:
     db_vehiculo = Vehiculo.get(db, vehiculo_id)
     if db_vehiculo is None:
-        raise exceptions.VehiculoNoEncontrado()
+        raise exceptions.TipoVehiculoInvalido()
     return db_vehiculo
 
 
@@ -90,12 +92,11 @@ def modificar_vehiculo(
     db: Session, vehiculo_id: int, vehiculo: schemas.VehiculoUpdate
 ) -> Vehiculo:
     db_vehiculo = leer_vehiculo(db, vehiculo_id)
-    return db_vehiculo.update(db, nombre=vehiculo.nombre, patente=vehiculo.patente)
+    return db_vehiculo.update(db, nombre=vehiculo.nombre, tipo=vehiculo.tipo)
 
 
 def eliminar_vehiculo(db: Session, vehiculo_id: int) -> Vehiculo:
-    db_vehiculo = leer_vehiculo(db, vehiculo_id_id)
-    if len(db_vehiculo.mascotas) > 0:
-        raise exceptions.VehiculoTienePatente()
+    db_vehiculo = leer_vehiculo(vehiculo_id)
     db_vehiculo.delete(db)
     return db_vehiculo
+

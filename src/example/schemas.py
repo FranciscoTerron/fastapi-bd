@@ -1,7 +1,8 @@
-from pydantic import BaseModel, EmailStr, PatenteStr, field_validator
+from pydantic import BaseModel, EmailStr, field_validator
 from typing import List
 from datetime import datetime
 from src.example.models import TipoMascota
+from src.example.models import TipoVehiculo
 from src.example.constants import ErrorCode
 from src.example import exceptions
 
@@ -65,15 +66,22 @@ class Mascota(MascotaBase):
     model_config = {"from_attributes": True}
 
 
-
+# Vehiculo
 
 class VehiculoBase(BaseModel):
     nombre: str
-    patente: PatenteStr
+    tipo: TipoVehiculo  # solo permitiremos valores de este tipo.
+
+    @field_validator("tipo", mode="before")
+    @classmethod
+    def is_valid_tipo_mascota(cls, v: str) -> str:
+        if v.lower() not in TipoVehiculo:
+            raise exceptions.TipoVehiculoInvalido(list(TipoVehiculo))
+        return v.lower()
 
 
 class VehiculoCreate(VehiculoBase):
-    pass
+    tutor_id: int
 
 
 class VehiculoUpdate(VehiculoBase):
@@ -84,9 +92,8 @@ class Vehiculo(VehiculoBase):
     id: int
     fecha_creacion: datetime
     fecha_modificacion: datetime
-    mascotas: List["Mascota"]
+    tipo: TipoVehiculo
+    tutor_id: int
+    nombre_tutor: str
 
-    # from_atributes=True permite que Pydantic trabaje con modelos SQLAlchemy
-    # más info.: https://docs.pydantic.dev/latest/api/config/#pydantic.config.ConfigDict.from_attributes
     model_config = {"from_attributes": True}
-

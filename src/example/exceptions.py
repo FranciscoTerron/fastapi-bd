@@ -28,9 +28,14 @@ class TipoMascotaInvalido(ValueError):
         super().__init__(message)
 
 
-class VehiculoNoEncontrado(NotFound):
-    DETAIL = ErrorCode.PERSONA_NO_ENCONTRADA
+class TipoVehiculoInvalido(ValueError):
+    def __init__(self, posibles_tipos: List[str]):
+        posibles_tipos = ", ".join(posibles_tipos)
+        message = f"{ErrorCode.TipoVehiculoInvalido} {posibles_tipos}."
+        super().__init__(message)
+
+
 
 
 class VehiculoTienePatente(NotFound):
-    DETAIL = ErrorCode.PERSONA_NO_ENCONTRADA
+    DETAIL = ErrorCode.TIPO_VEHICULO_INVALIDO

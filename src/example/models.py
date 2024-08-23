@@ -48,18 +48,27 @@ class Mascota(BaseModel):
     def nombre_tutor(self):
         return self.tutor.nombre
     
-class Vehiculo (BaseModel):
-    __tablename__ = "vehiculos"
+
+class TipoVehiculo(StrEnum):
+    AUTO = auto()
+    CAMIONETA = auto()
+    CAMION = auto()
+
+class Vehiculo(BaseModel):
+    __tablename__ = "vehiculo"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     nombre: Mapped[str] = mapped_column(String, index=True)
-    patente: Mapped[str] = mapped_column(String, unique=True, index=True)
+    tipo: Mapped[TipoVehiculo] = mapped_column(String)  # e.g., "Camion", "Auto"
+    tutor_id: Mapped[int] = mapped_column(
+        ForeignKey("personas.id")
+    ) 
+    tutor: Mapped[Persona] = relationship("Persona", back_populates="mascotas")
     fecha_creacion: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(UTC))
     fecha_modificacion: Mapped[datetime] = mapped_column(
         DateTime, default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC)
     )
-    mascotas: Mapped[Optional[List["Mascota"]]] = relationship(
-        "Mascota", back_populates="tutor"
-        
-    )
 
+    @property
+    def nombre_duenio(self):
+        return self.tutor.nombre

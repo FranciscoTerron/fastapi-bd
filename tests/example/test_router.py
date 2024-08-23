@@ -9,7 +9,6 @@ from src.example.exceptions import ErrorCode
 
 client = TestClient(app)
 
-
 def test_read_personas(session: Session) -> None:
     response = client.get(f"/personas")
     assert response.status_code == status.HTTP_200_OK
